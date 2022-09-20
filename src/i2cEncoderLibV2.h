@@ -21,6 +21,8 @@
 #include <WProgram.h>
 #endif
 
+#include <Wire.h>
+
 class i2cEncoderLibV2 {
 public:
 
@@ -184,7 +186,7 @@ public:
 	Callback onFadeProcess = NULL;
 
 	/** Configuration methods **/
-	i2cEncoderLibV2(uint8_t add);
+	i2cEncoderLibV2(uint8_t add, TwoWire *theWire = &Wire);
 	void begin(uint16_t conf);
 	void reset(void);
 	void autoconfigInterrupt(void);
@@ -295,6 +297,7 @@ private:
 
 	uint8_t _clockstreach; 
 	uint8_t _add = 0x00;
+	TwoWire *_wire;
 	uint8_t _stat = 0x00;
 	uint8_t _stat2 = 0x00;
 	uint8_t _gconf = 0x00;
