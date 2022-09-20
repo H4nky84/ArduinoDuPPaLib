@@ -17,8 +17,9 @@
 
 /*********************************** Public functions *************************************/
 /** Class costructor **/
-i2cEncoderLibV2::i2cEncoderLibV2(uint8_t add) {
+i2cEncoderLibV2::i2cEncoderLibV2(uint8_t add, TwoWire *theWire) {
 	_add = add;
+	_wire = theWire;
 }
 
 /** Used for initialize the encoder **/
@@ -536,25 +537,25 @@ void i2cEncoderLibV2::writeEEPROM(uint8_t add, uint8_t data) {
 uint8_t i2cEncoderLibV2::readEncoderByte(uint8_t reg) {
 	byte rdata = 0xFF;
 
-	Wire.beginTransmission(_add);
-	Wire.write(reg);
-	Wire.endTransmission();
-	Wire.requestFrom(_add, (uint8_t) 1);
-	if (Wire.available()) {
-		rdata = Wire.read();
+	_wire->beginTransmission(_add);
+	_wire->write(reg);
+	_wire->endTransmission();
+	_wire->requestFrom(_add, (uint8_t) 1);
+	if (_wire->available()) {
+		rdata = _wire->read();
 	}
 	return rdata;
 }
 
 /** Read 2 bytes from the encoder **/
 int16_t i2cEncoderLibV2::readEncoderInt(uint8_t reg) {
-	Wire.beginTransmission(_add);
-	Wire.write(reg);
-	Wire.endTransmission();
-	Wire.requestFrom(_add, (uint8_t) 4);
-	if (Wire.available()) {
-		_tem_data.bval[1] = Wire.read();
-		_tem_data.bval[0] = Wire.read();
+	_wire->beginTransmission(_add);
+	_wire->write(reg);
+	_wire->endTransmission();
+	_wire->requestFrom(_add, (uint8_t) 4);
+	if (_wire->available()) {
+		_tem_data.bval[1] = _wire->read();
+		_tem_data.bval[0] = _wire->read();
 	}
 	return ((int16_t) _tem_data.val);
 }
@@ -562,30 +563,30 @@ int16_t i2cEncoderLibV2::readEncoderInt(uint8_t reg) {
 /** Read 4 bytes from the encoder **/
 int32_t i2cEncoderLibV2::readEncoderLong(uint8_t reg) {
 
-	Wire.beginTransmission(_add);
-	Wire.write(reg);
-	Wire.endTransmission();
-	Wire.requestFrom(_add, (uint8_t) 4);
-	if (Wire.available()) {
-		_tem_data.bval[3] = Wire.read();
-		_tem_data.bval[2] = Wire.read();
-		_tem_data.bval[1] = Wire.read();
-		_tem_data.bval[0] = Wire.read();
+	_wire->beginTransmission(_add);
+	_wire->write(reg);
+	_wire->endTransmission();
+	_wire->requestFrom(_add, (uint8_t) 4);
+	if (_wire->available()) {
+		_tem_data.bval[3] = _wire->read();
+		_tem_data.bval[2] = _wire->read();
+		_tem_data.bval[1] = _wire->read();
+		_tem_data.bval[0] = _wire->read();
 	}
 	return ((int32_t) _tem_data.val);
 }
 
 /** Read 4 bytes from the encoder **/
 float i2cEncoderLibV2::readEncoderFloat(uint8_t reg) {
-	Wire.beginTransmission(_add);
-	Wire.write(reg);
-	Wire.endTransmission();
-	Wire.requestFrom(_add, (uint8_t) 4);
-	if (Wire.available()) {
-		_tem_data.bval[3] = Wire.read();
-		_tem_data.bval[2] = Wire.read();
-		_tem_data.bval[1] = Wire.read();
-		_tem_data.bval[0] = Wire.read();
+	_wire->beginTransmission(_add);
+	_wire->write(reg);
+	_wire->endTransmission();
+	_wire->requestFrom(_add, (uint8_t) 4);
+	if (_wire->available()) {
+		_tem_data.bval[3] = _wire->read();
+		_tem_data.bval[2] = _wire->read();
+		_tem_data.bval[1] = _wire->read();
+		_tem_data.bval[0] = _wire->read();
 	}
 	return ((float) _tem_data.fval);
 }
@@ -594,10 +595,10 @@ float i2cEncoderLibV2::readEncoderFloat(uint8_t reg) {
 /** Send to the encoder 1 byte **/
 void i2cEncoderLibV2::writeEncoder(uint8_t reg, uint8_t data) {
 
-	Wire.beginTransmission(_add);
-	Wire.write(reg);
-	Wire.write(data);
-	Wire.endTransmission();
+	_wire->beginTransmission(_add);
+	_wire->write(reg);
+	_wire->write(data);
+	_wire->endTransmission();
 }
 
 /** Send to the encoder 4 byte **/
@@ -608,10 +609,10 @@ void i2cEncoderLibV2::writeEncoder(uint8_t reg, int32_t data) {
 	temp[1] = _tem_data.bval[2];
 	temp[2] = _tem_data.bval[1];
 	temp[3] = _tem_data.bval[0];
-	Wire.beginTransmission(_add);
-	Wire.write(reg);
-	Wire.write(temp, (uint8_t) 4);
-	Wire.endTransmission();
+	_wire->beginTransmission(_add);
+	_wire->write(reg);
+	_wire->write(temp, (uint8_t) 4);
+	_wire->endTransmission();
 }
 
 /** Send to the encoder 4 byte for floating number **/
@@ -623,10 +624,10 @@ void i2cEncoderLibV2::writeEncoder(uint8_t reg, float data) {
 	temp[1] = _tem_data.bval[2];
 	temp[2] = _tem_data.bval[1];
 	temp[3] = _tem_data.bval[0];
-	Wire.beginTransmission(_add);
-	Wire.write(reg);
-	Wire.write(temp, (uint8_t) 4);
-	Wire.endTransmission();
+	_wire->beginTransmission(_add);
+	_wire->write(reg);
+	_wire->write(temp, (uint8_t) 4);
+	_wire->endTransmission();
 
 }
 
@@ -637,9 +638,9 @@ void i2cEncoderLibV2::writeEncoder24bit(uint8_t reg, uint32_t data) {
 	temp[0] = _tem_data.bval[2];
 	temp[1] = _tem_data.bval[1];
 	temp[2] = _tem_data.bval[0];
-	Wire.beginTransmission(_add);
-	Wire.write(reg);
-	Wire.write(temp, (uint8_t) 3);
-	Wire.endTransmission();
+	_wire->beginTransmission(_add);
+	_wire->write(reg);
+	_wire->write(temp, (uint8_t) 3);
+	_wire->endTransmission();
 
 }
