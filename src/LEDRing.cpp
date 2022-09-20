@@ -17,8 +17,9 @@
 #include "LEDRing.h"
 #include <Wire.h>
 
-LEDRing::LEDRing(uint8_t add) {
+LEDRing::LEDRing(uint8_t add, TwoWire *theWire) {
   _add = add;
+  _wire = theWire;
 
 }
 
@@ -114,29 +115,29 @@ void  LEDRing::selectBank(uint8_t b) {
 }
 
 void LEDRing::writeRegister8(uint8_t reg, uint8_t data) {
-  Wire.beginTransmission(_add);
-  Wire.write(reg);
-  Wire.write(data);
-  Wire.endTransmission();
+  _wire->beginTransmission(_add);
+  _wire->write(reg);
+  _wire->write(data);
+  _wire->endTransmission();
 }
 
 void LEDRing::writeBuff(uint8_t reg, uint8_t *data, uint8_t dim) {
-  Wire.beginTransmission(_add);
-  Wire.write(reg);
-  Wire.write(data, dim);
-  Wire.endTransmission();
+  _wire->beginTransmission(_add);
+  _wire->write(reg);
+  _wire->write(data, dim);
+  _wire->endTransmission();
 
 }
 
 uint8_t LEDRing::readRegister8(uint8_t reg) {
   byte rdata = 0xFF;
 
-  Wire.beginTransmission(_add);
-  Wire.write(reg);
-  Wire.endTransmission();
-  Wire.requestFrom(_add, (uint8_t) 1);
-  if (Wire.available()) {
-    rdata = Wire.read();
+  _wire->beginTransmission(_add);
+  _wire->write(reg);
+  _wire->endTransmission();
+  _wire->requestFrom(_add, (uint8_t) 1);
+  if (_wire->available()) {
+    rdata = _wire->read();
   }
   return rdata;
 }
