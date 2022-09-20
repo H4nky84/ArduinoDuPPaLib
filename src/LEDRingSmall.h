@@ -21,6 +21,8 @@
 #include <WProgram.h>
 #endif
 
+#include <Wire.h>
+
 #define ISSI3746_PAGE0 0x00
 #define ISSI3746_PAGE1 0x01
 
@@ -54,7 +56,7 @@
 class LEDRingSmall {
   public:
 
-    LEDRingSmall(uint8_t add);
+    LEDRingSmall(uint8_t add, TwoWire *theWire = &Wire);
     void LEDRingSmall_PWM_MODE(void);
     void LEDRingSmall_Configuration(uint8_t conf);
     void LEDRingSmall_SetScaling(uint8_t led_n, uint8_t scal);
@@ -81,6 +83,7 @@ class LEDRingSmall {
     };
 
     uint8_t _add;
+    TwoWire *_wire;
     void  selectBank(uint8_t b);
     void  writeRegister8(uint8_t reg, uint8_t data);
     void  writeBuff(uint8_t reg, uint8_t *data, uint8_t dim);
